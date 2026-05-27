@@ -14,6 +14,7 @@ Uma aplicação web estática que estima a emissão de CO₂ de viagens entre ci
   - [📋 Índice](#-índice)
   - [Sobre o Projeto](#sobre-o-projeto)
   - [Funcionalidades](#funcionalidades)
+  - [🚀 Status Final do Projeto](#-status-final-do-projeto)
   - [Estrutura do Projeto](#estrutura-do-projeto)
     - [Responsabilidades de cada arquivo](#responsabilidades-de-cada-arquivo)
   - [Como Usar](#como-usar)
@@ -54,6 +55,26 @@ O projeto é 100% front-end, sem dependências de frameworks ou build tools — 
 - **Validação inline** — erros exibidos abaixo de cada campo sem uso de `alert()`
 - **Interface responsiva** para desktop e mobile
 - **Deploy automatizado** via GitHub Actions para GitHub Pages
+
+---
+
+## 🚀 Status Final do Projeto
+
+| Feature | Status |
+|---|---|
+| API OpenRouteService | ✅ |
+| Cálculo de distância via API | ✅ |
+| Autocomplete de cidades | ✅ |
+| Validação inline | ✅ |
+| Favicon 🌿 | ✅ |
+| Histórico com localStorage | ✅ |
+| Modal avião doméstico | ✅ |
+| Cálculo por frequência semanal | ✅ |
+| Deploy GitHub Pages + Node 24 | ✅ |
+| README atualizado | ✅ |
+| Comparação visual | ✅ |
+| Interface responsiva | ✅ |
+
 
 ---
 
