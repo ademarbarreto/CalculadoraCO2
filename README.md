@@ -41,6 +41,8 @@ A **Calculadora de Emissão de CO₂** permite estimar a quantidade de CO₂ emi
 
 O projeto é 100% front-end, sem dependências de frameworks ou build tools — apenas HTML, CSS e JavaScript vanilla.
 
+O projeto pode ser acessado pela seguinte URL:  https://ademarbarreto.github.io/CalculadoraCO2/. 
+
 ---
 
 ## Funcionalidades
