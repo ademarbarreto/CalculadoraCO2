@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Configura feedback visual, autocomplete e checkbox manual
     CONFIG.setupDistanceAutofill();
 
+    // Renderiza o histórico salvo ao carregar a página
+    UI.renderHistorySection();
+
     const calculatorForm = document.getElementById('calculator-form');
     calculatorForm.addEventListener('submit', handleFormSubmit);
 
@@ -136,6 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const submitButton = calculatorForm.querySelector('.form-submit');
         UI.showLoading(submitButton);
         UI.hideElement('results');
+        UI.hideElement('frequency');
         UI.hideElement('comparison');
         UI.hideElement('carbon-credits');
 
@@ -171,6 +175,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error('Distância inválida retornada.');
             }
 
+            // Lê campos de frequência
+            const tripsPerWeek = parseInt(document.getElementById('trips-per-week').value) || 5;
+            const roundTrip    = document.getElementById('round-trip').checked;
+
             // Cálculos
             const emission           = Calculator.calculateEmission(distance, transportMode);
             const carEmission        = Calculator.calculateEmission(distance, 'car');
@@ -179,19 +187,26 @@ document.addEventListener('DOMContentLoaded', function() {
             const allModesComparison = Calculator.calculateAllModes(distance);
             const carbonCredits      = Calculator.calculateCarbonCredits(emission);
             const creditPrice        = Calculator.estimateCreditPrice(carbonCredits);
+            const frequencyData     = Calculator.calculateFrequency(emission, tripsPerWeek, roundTrip);
 
             const resultsData = { origin, destination, distance, emission, mode: transportMode, savings, distanceSource };
             const creditsData = { credits: carbonCredits, price: creditPrice };
 
             // Renderização
             document.getElementById('results-content').innerHTML      = UI.renderResults(resultsData);
+            document.getElementById('frequency-content').innerHTML     = UI.renderFrequency(frequencyData, transportMode);
             document.getElementById('comparison-content').innerHTML   = UI.renderComparison(allModesComparison, transportMode);
             document.getElementById('carbon-credits-content').innerHTML = UI.renderCarbonCredits(creditsData);
 
             UI.showElement('results');
+            UI.showElement('frequency');
             UI.showElement('comparison');
             UI.showElement('carbon-credits');
             UI.scrollToElement('results');
+
+            // Salva no histórico e re-renderiza a seção
+            UI.saveToHistory({ origin, destination, distance, emission, mode: transportMode });
+            UI.renderHistorySection();
 
             console.log('✅ Cálculo concluído:', { emission, carbonCredits, savings, distanceSource });
 

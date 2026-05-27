@@ -1,6 +1,6 @@
 # 🍃 Calculadora de Emissão de CO₂
 
-Uma aplicação web estática que estima a emissão de CO₂ de viagens entre cidades brasileiras, comparando diferentes meios de transporte e calculando créditos de carbono necessários para compensação.
+Uma aplicação web estática que estima a emissão de CO₂ de viagens entre cidades brasileiras, comparando diferentes meios de transporte, calculando créditos de carbono e o impacto acumulado por frequência de uso.
 
 ![Deploy Status](https://img.shields.io/badge/deploy-GitHub%20Pages-222222?logo=github)
 ![Status](https://img.shields.io/badge/status-ativo-10b981)
@@ -10,19 +10,28 @@ Uma aplicação web estática que estima a emissão de CO₂ de viagens entre ci
 
 ## 📋 Índice
 
-- [Sobre o Projeto](#sobre-o-projeto)
-- [Funcionalidades](#funcionalidades)
-- [Estrutura do Projeto](#estrutura-do-projeto)
-- [Como Usar](#como-usar)
-- [Meios de Transporte e Fatores de Emissão](#meios-de-transporte-e-fatores-de-emissão)
-- [Deploy](#deploy)
-- [Sugestões de Melhoria](#sugestões-de-melhoria)
+- [🍃 Calculadora de Emissão de CO₂](#-calculadora-de-emissão-de-co)
+  - [📋 Índice](#-índice)
+  - [Sobre o Projeto](#sobre-o-projeto)
+  - [Funcionalidades](#funcionalidades)
+  - [Estrutura do Projeto](#estrutura-do-projeto)
+    - [Responsabilidades de cada arquivo](#responsabilidades-de-cada-arquivo)
+  - [Como Usar](#como-usar)
+    - [Localmente](#localmente)
+    - [Via GitHub Pages](#via-github-pages)
+  - [Meios de Transporte e Fatores de Emissão](#meios-de-transporte-e-fatores-de-emissão)
+  - [API OpenRouteService](#api-openrouteservice)
+    - [Configurar sua chave](#configurar-sua-chave)
+    - [Em produção (GitHub Pages)](#em-produção-github-pages)
+  - [Deploy](#deploy)
+  - [Contribuindo](#contribuindo)
+  - [Autor](#autor)
 
 ---
 
 ## Sobre o Projeto
 
-A **Calculadora de Emissão de CO₂** permite ao usuário estimar a quantidade de CO₂ emitida em uma viagem entre duas cidades brasileiras, escolhendo entre quatro meios de transporte. A aplicação também compara as emissões entre todos os modais disponíveis e calcula o custo de créditos de carbono para compensar o impacto ambiental.
+A **Calculadora de Emissão de CO₂** permite estimar a quantidade de CO₂ emitida em viagens entre quaisquer cidades, com distâncias calculadas em tempo real via API. A aplicação compara os modais disponíveis, calcula créditos de carbono para compensação e projeta o impacto acumulado de acordo com a frequência de uso da rota.
 
 O projeto é 100% front-end, sem dependências de frameworks ou build tools — apenas HTML, CSS e JavaScript vanilla.
 
@@ -30,11 +39,14 @@ O projeto é 100% front-end, sem dependências de frameworks ou build tools — 
 
 ## Funcionalidades
 
-- **Cálculo de emissão** por rota e meio de transporte (bicicleta, carro, ônibus, caminhão)
-- **Autopreenchimento de distância** entre cidades cadastradas no banco de rotas
-- **Entrada manual de distância** para rotas não cadastradas
-- **Comparação visual** entre todos os meios de transporte com barras de progresso coloridas
-- **Cálculo de créditos de carbono** necessários para offset, com estimativa de custo em BRL
+- **Autocomplete de cidades** com busca em tempo real via API OpenRouteService (debounce de 350ms, navegação por teclado)
+- **Cálculo de distância via API** para qualquer cidade brasileira, com entrada manual como fallback
+- **5 modais de transporte**: bicicleta, carro, ônibus, caminhão e avião doméstico
+- **Comparação visual** entre todos os modais com barras de progresso coloridas e percentual vs. carro
+- **Cálculo de frequência semanal** — projeta emissões por viagem, semana, mês e ano com suporte a ida e volta
+- **Créditos de carbono** — quantidade necessária para offset e estimativa de custo em BRL
+- **Histórico com localStorage** — salva as últimas 5 consultas, persiste entre sessões, com opção de limpar
+- **Validação inline** — erros exibidos abaixo de cada campo sem uso de `alert()`
 - **Interface responsiva** para desktop e mobile
 - **Deploy automatizado** via GitHub Actions para GitHub Pages
 
@@ -47,16 +59,15 @@ O projeto é 100% front-end, sem dependências de frameworks ou build tools — 
 ├── index.html              # Estrutura semântica da página
 ├── README.md
 ├── css/
-│   └── style.css           # Estilos, variáveis CSS e responsividade
+│   └── style.css           # Design system, variáveis CSS, responsividade
 ├── js/
-│   ├── app.js              # Inicialização e handler do formulário
-│   ├── calculator.js       # Lógica de cálculo de emissões e créditos
-│   ├── config.js           # Fatores de emissão, metadados e autofill de distância
-│   ├── routes-data.js      # Banco de dados de rotas entre cidades brasileiras
-│   └── ui.js               # Renderização de resultados e manipulação do DOM
+│   ├── app.js              # Inicialização, validação e handler do formulário (async)
+│   ├── calculator.js       # Funções puras de cálculo (emissão, frequência, créditos)
+│   ├── config.js           # Configuração, integração ORS, autocomplete e autofill
+│   └── ui.js               # Renderização de resultados, histórico e DOM utils
 └── .github/
     └── workflows/
-        └── deploy.yml      # Pipeline de deploy para GitHub Pages
+        └── deploy.yml      # Pipeline de deploy para GitHub Pages (Node.js 24)
 ```
 
 ### Responsabilidades de cada arquivo
@@ -65,11 +76,10 @@ O projeto é 100% front-end, sem dependências de frameworks ou build tools — 
 |---|---|
 | `index.html` | Estrutura semântica (HTML5), formulário e seções de resultado |
 | `css/style.css` | Design system com CSS custom properties, layout, animações |
-| `js/app.js` | Orquestra inicialização, validação e fluxo de submit |
-| `js/calculator.js` | Funções puras de cálculo (emissão, comparação, créditos) |
-| `js/config.js` | Constantes de configuração e lógica de autofill |
-| `js/routes-data.js` | Banco estático de ~45 rotas entre cidades brasileiras |
-| `js/ui.js` | Funções de renderização de HTML e utilitários de DOM |
+| `js/app.js` | Orquestra inicialização, validação inline e fluxo de submit assíncrono |
+| `js/calculator.js` | Funções puras: emissão, comparação, créditos e frequência |
+| `js/config.js` | Chave ORS, fatores de emissão, geocodificação, autocomplete e distância |
+| `js/ui.js` | Renderização de resultados, frequência, histórico e utilitários de DOM |
 
 ---
 
@@ -83,20 +93,20 @@ O projeto é 100% front-end, sem dependências de frameworks ou build tools — 
    cd calculadora-co2
    ```
 
-2. Abra o arquivo diretamente no navegador:
+2. Abra com um servidor local (necessário para as chamadas de API funcionarem):
    ```bash
-   # Linux / macOS
-   open index.html
+   # VS Code — extensão Live Server (recomendado)
+   # Clique com botão direito no index.html → Open with Live Server
 
-   # Ou use um servidor local simples
+   # Ou via terminal
    npx serve .
    ```
 
-> Não é necessário instalar dependências — o projeto não usa npm ou build tools.
+> Abrir o `index.html` diretamente pelo sistema de arquivos (`file://`) pode bloquear as requisições de API por CORS.
 
 ### Via GitHub Pages
 
-Acesse a URL gerada pelo GitHub Pages após o deploy (configurada no workflow).
+Acesse a URL gerada pelo GitHub Pages após o deploy.
 
 ---
 
@@ -107,9 +117,35 @@ Acesse a URL gerada pelo GitHub Pages após o deploy (configurada no workflow).
 | 🚲 Bicicleta | 0,000 | Emissão zero |
 | 🚌 Ônibus | 0,089 | Média por passageiro |
 | 🚗 Carro | 0,120 | Veículo a combustão, médio porte |
+| ✈️ Avião (dom.) | 0,180 | Voo doméstico, média por passageiro |
 | 🚚 Caminhão | 0,960 | Veículo de carga |
 
 **Créditos de carbono:** 1 crédito = 1.000 kg CO₂ | Preço de referência: R$ 50 – R$ 150 por crédito.
+
+---
+
+## API OpenRouteService
+
+O projeto utiliza a [OpenRouteService API](https://openrouteservice.org) (gratuita) para:
+
+- **Geocodificação** — converte nomes de cidades em coordenadas `[lng, lat]`
+- **Autocomplete** — sugere cidades enquanto o usuário digita (endpoint `/geocode/autocomplete`)
+- **Distância de rota** — calcula a distância real entre dois pontos (endpoint `/v2/directions/driving-car`)
+
+### Configurar sua chave
+
+1. Crie uma conta em [openrouteservice.org](https://openrouteservice.org/dev/#/signup)
+2. Gere um token gratuito no Dashboard
+3. Substitua a chave em `js/config.js`:
+   ```javascript
+   ORS_API_KEY: 'sua-chave-aqui'
+   ```
+
+**Limites do plano gratuito:** 2.000 requisições/dia · sem cartão de crédito.
+
+### Em produção (GitHub Pages)
+
+Adicione o domínio do GitHub Pages nas configurações do token no painel ORS para evitar bloqueios por CORS.
 
 ---
 
@@ -127,102 +163,25 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true  # compatibilidade Node.js 24
 ```
 
----
 
-## Sugestões de Melhoria
-
-### 🔴 Alta Prioridade
-
-#### 1. Integração com API de Distâncias/Geocodificação
-Atualmente as distâncias são **fixas e limitadas** (~45 rotas cadastradas). A principal melhoria é substituir o banco estático por uma API real:
-
-- **Google Maps Distance Matrix API** — retorna distância real de rota por modal
-- **OpenRouteService API** (gratuita/open source) — suporta rotas para carro, bicicleta e pedestres
-- **OSRM (Open Source Routing Machine)** — pode ser self-hosted, sem custo de API
-
-**Como implementaria:**
-```javascript
-// Exemplo com OpenRouteService
-async function getDistanceFromAPI(origin, destination) {
-  const geoCode = async (city) => {
-    const res = await fetch(
-      `https://api.openrouteservice.org/geocode/search?text=${encodeURIComponent(city)}&api_key=SUA_CHAVE`
-    );
-    const data = await res.json();
-    return data.features[0].geometry.coordinates; // [lng, lat]
-  };
-
-  const [originCoords, destCoords] = await Promise.all([
-    geoCode(origin),
-    geoCode(destination)
-  ]);
-
-  const res = await fetch('https://api.openrouteservice.org/v2/directions/driving-car', {
-    method: 'POST',
-    headers: { 'Authorization': 'SUA_CHAVE', 'Content-Type': 'application/json' },
-    body: JSON.stringify({ coordinates: [originCoords, destCoords] })
-  });
-
-  const data = await res.json();
-  return data.routes[0].summary.distance / 1000; // metros → km
-}
-```
-
-> Com isso, qualquer cidade do mundo pode ser usada como origem/destino, sem manutenção manual de rotas.
-
-#### 2. Fatores de Emissão Mais Precisos
-Os fatores atuais são fixos e genéricos. Melhorias possíveis:
-- Diferenciar **carro por tipo de combustível** (gasolina, etanol, elétrico, híbrido)
-- Adicionar **avião** como modal (alto impacto em viagens longas)
-- Considerar **ocupação do veículo** (ex.: carro com 4 passageiros vs. 1)
-- Usar fatores regionais do Brasil (a matriz elétrica brasileira é majoritariamente renovável, o que afeta veículos elétricos)
-
----
-
-### 🟡 Média Prioridade
-
-#### 3. Gráfico Visual de Comparação
-Substituir as barras CSS por um gráfico interativo com **Chart.js** ou **D3.js**, mostrando comparações em formato de gráfico de barras ou radar.
-
-#### 4. Persistência de Histórico
-Salvar as últimas N consultas no `localStorage` para o usuário consultar seu histórico de rotas e emissões acumuladas.
-
-#### 5. Modo de Cálculo Mensal / Anual
-Adicionar um campo de **frequência** (ex.: "faço esse trajeto 5x por semana") para calcular a emissão acumulada mensal e anual, com uma meta de redução personalizada.
-
-#### 6. Compartilhamento de Resultado
-Botão para gerar um link único com os parâmetros da rota (via query string na URL), permitindo compartilhar resultados.
-
----
-
-### 🟢 Baixa Prioridade / Nice-to-have
-
-#### 7. Internacionalização (i18n)
-O projeto mistura português e inglês (labels em inglês no HTML, UI em português). Padronizar e adicionar suporte a múltiplos idiomas.
-
-#### 8. Modo Escuro
-Adicionar suporte a `prefers-color-scheme: dark` com um toggle manual.
-
-#### 9. Testes Automatizados
-As funções em `calculator.js` são puras e fáceis de testar — adicionar uma suíte com **Vitest** ou **Jest** aumentaria a confiabilidade.
-
-#### 10. PWA (Progressive Web App)
-Adicionar um `manifest.json` e um service worker para permitir instalação como app mobile e funcionamento offline.
-
----
 
 ## Contribuindo
 
 1. Fork o projeto
 2. Crie uma branch: `git checkout -b feature/minha-melhoria`
-3. Commit suas mudanças: `git commit -m 'feat: adiciona integração com API de geocodificação'`
+3. Commit suas mudanças: `git commit -m 'feat: descrição da melhoria'`
 4. Push para a branch: `git push origin feature/minha-melhoria`
 5. Abra um Pull Request
 
 ---
 
-## Licença
+## Autor
 
-Distribuído sob a licença MIT. Veja `LICENSE` para mais informações.
+Ademar Silva Barreto Junior
+
+LinkedIn: https://www.linkedin.com/in/ademarsilvabarretojunior/

@@ -17,17 +17,19 @@ const CONFIG = {
         bicycle: 0,
         car: 0.12,
         bus: 0.089,
-        truck: 0.96
+        truck: 0.96,
+        plane: 0.18
     },
 
     /**
      * Transport mode metadata for UI rendering
      */
     TRANSPORT_MODES: {
-        bicycle: { label: "Bicicleta", icon: "🚲", color: "#10b981" },
-        car:     { label: "Carro",     icon: "🚗", color: "#3b82f6" },
-        bus:     { label: "Ônibus",    icon: "🚌", color: "#f59e0b" },
-        truck:   { label: "Caminhão",  icon: "🚚", color: "#ef4444" }
+        bicycle: { label: "Bicicleta",     icon: "🚲", color: "#10b981" },
+        car:     { label: "Carro",         icon: "🚗", color: "#3b82f6" },
+        bus:     { label: "Ônibus",        icon: "🚌", color: "#f59e0b" },
+        truck:   { label: "Caminhão",      icon: "🚚", color: "#ef4444" },
+        plane:   { label: "Avião (dom.)",  icon: "✈️", color: "#8b5cf6" }
     },
 
     /**
