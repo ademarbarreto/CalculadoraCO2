@@ -8,7 +8,7 @@ const CONFIG = {
      * OpenRouteService API key
      * Obtenha a sua em: https://openrouteservice.org/dev/#/signup
      */
-    ORS_API_KEY: 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjYyYWNmMWExNjQ4ZTQ2YzQ4OGFlYjY0NDEyMzkxY2QyIiwiaCI6Im11cm11cjY0In0=',
+    ORS_API_KEY: 'sua-chave-aqui',
 
     /**
      * CO2 emission factors in kg per kilometer for each transport mode

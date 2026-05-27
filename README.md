@@ -24,6 +24,11 @@ Uma aplicação web estática que estima a emissão de CO₂ de viagens entre ci
     - [Configurar sua chave](#configurar-sua-chave)
     - [Em produção (GitHub Pages)](#em-produção-github-pages)
   - [Deploy](#deploy)
+- [Imagens](#imagens)
+    - [Tela de cálculo de distância  utilizando Geocodificação](#tela-de-cálculo-de-distância--utilizando-geocodificação)
+    - [Tela de resultados de emissão e emissão de frequência](#tela-de-resultados-de-emissão-e-emissão-de-frequência)
+    - [Tela de comparação de emissão de C02 entre meios de transporte](#tela-de-comparação-de-emissão-de-c02-entre-meios-de-transporte)
+    - [Tela de histórico de consultas de viagem e de créditos de carbono](#tela-de-histórico-de-consultas-de-viagem-e-de-créditos-de-carbono)
   - [Contribuindo](#contribuindo)
   - [Autor](#autor)
 
@@ -60,6 +65,7 @@ O projeto é 100% front-end, sem dependências de frameworks ou build tools — 
 ├── README.md
 ├── css/
 │   └── style.css           # Design system, variáveis CSS, responsividade
+├── images                  # Imagens das telas do aplicativo
 ├── js/
 │   ├── app.js              # Inicialização, validação e handler do formulário (async)
 │   ├── calculator.js       # Funções puras de cálculo (emissão, frequência, créditos)
@@ -168,7 +174,23 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true  # compatibilidade Node.js 24
 ```
 
+# Imagens
 
+### Tela de cálculo de distância  utilizando Geocodificação
+
+![Logo do Projeto](/images/Calculadora%20de%20CO2%20-%20Tela%201.png)
+
+### Tela de resultados de emissão e emissão de frequência
+
+![Logo do Projeto](/images/Calculadora%20CO2%20Emissao.png)
+
+### Tela de comparação de emissão de C02 entre meios de transporte
+
+![Logo do Projeto](/images/Calculadora%20de%20CO2%20Meios%20de%20Transporte.png)
+
+### Tela de histórico de consultas de viagem e de créditos de carbono
+
+![Logo do Projeto](/images/Calculadora%20de%20CO2%20Histórico%20de%20consultas.png)
 
 ## Contribuindo
 
